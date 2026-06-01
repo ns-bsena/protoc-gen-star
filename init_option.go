@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/afero"
+	"google.golang.org/protobuf/types/descriptorpb"
 )
 
 // An InitOption modifies the behavior of a Generator at initialization.
@@ -53,5 +54,21 @@ func BiDirectional() InitOption {
 func SupportedFeatures(feat *uint64) InitOption {
 	return func(g *Generator) {
 		g.persister.SetSupportedFeatures(feat)
+	}
+}
+
+// Generators must specify exactly which editions they support. MinimumEdition and MaximumEdition fields for specify the precise support window.
+// See: https://protobuf.dev/editions/implementation/
+func MinimumEdition(me *descriptorpb.Edition) InitOption {
+	return func(g *Generator) {
+		g.persister.SetMinimumEdition(me)
+	}
+}
+
+// Generators must specify exactly which editions they support. MinimumEdition and MaximumEdition fields for specify the precise support window.
+// See: https://protobuf.dev/editions/implementation/
+func MaximumEdition(me *descriptorpb.Edition) InitOption {
+	return func(g *Generator) {
+		g.persister.SetMaximumEdition(me)
 	}
 }

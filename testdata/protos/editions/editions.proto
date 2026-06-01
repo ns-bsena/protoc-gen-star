@@ -1,0 +1,11 @@
+edition = "2024";
+
+package editions;
+
+// Edible is a simple message used to verify that proto files declaring
+// edition = "2024" are parsed properly by PG*.
+message Edible {
+  int32 id = 1;
+  string name = 2;
+  repeated string tags = 3;
+}

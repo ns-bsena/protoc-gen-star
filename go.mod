@@ -1,12 +1,12 @@
 module github.com/lyft/protoc-gen-star/v2
 
-go 1.17
+go 1.23
 
 require (
 	github.com/spf13/afero v1.3.3
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/tools v0.1.12
-	google.golang.org/protobuf v1.23.0
+	google.golang.org/protobuf v1.36.11
 )
 
 require (

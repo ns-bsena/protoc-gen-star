@@ -53,6 +53,23 @@ func TestGraph_FDSet(t *testing.T) {
 	msg, found := ast.Lookup(".kitchen.Sink")
 	assert.True(t, found)
 	assert.Implements(t, (*Message)(nil), msg)
+
+	// a proto file declaring edition = "2024" is parsed with the "editions"
+	// syntax and its messages are hydrated into the graph
+	edible, found := ast.Lookup(".editions.Edible")
+	assert.True(t, found)
+	assert.Implements(t, (*Message)(nil), edible)
+
+	var editionsFile File
+	for _, pkg := range ast.Packages() {
+		for _, f := range pkg.Files() {
+			if f.Name().String() == "editions/editions.proto" {
+				editionsFile = f
+			}
+		}
+	}
+	require.NotNil(t, editionsFile, "editions file not found in FDSet")
+	assert.Equal(t, Syntax("editions"), editionsFile.Syntax())
 }
 
 func TestGraph_Messages(t *testing.T) {

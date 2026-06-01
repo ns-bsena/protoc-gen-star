@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	descriptor "google.golang.org/protobuf/types/descriptorpb"
 )
 
 func TestPersister_Persist_Unrecognized(t *testing.T) {
@@ -336,6 +337,32 @@ func TestPersister_AddPostProcessor(t *testing.T) {
 	p.AddPostProcessor(good, bad)
 	out := p.postProcess(GeneratorFile{}, "")
 	assert.Equal(t, "good", out)
+}
+
+func TestPersister_Persist_Editions(t *testing.T) {
+	t.Parallel()
+
+	d := InitMockDebugger()
+	p := dummyPersister(d)
+
+	min := descriptor.Edition_EDITION_2023
+	max := descriptor.Edition_EDITION_2024
+	p.SetMinimumEdition(&min)
+	p.SetMaximumEdition(&max)
+
+	resp := p.Persist()
+
+	assert.Equal(t, int32(descriptor.Edition_EDITION_2023), resp.GetMinimumEdition())
+	assert.Equal(t, int32(descriptor.Edition_EDITION_2024), resp.GetMaximumEdition())
+
+	// a nil edition clears the value rather than panicking
+	p.SetMinimumEdition(nil)
+	p.SetMaximumEdition(nil)
+
+	resp = p.Persist()
+
+	assert.Nil(t, resp.MinimumEdition)
+	assert.Nil(t, resp.MaximumEdition)
 }
 
 func dummyPersister(d Debugger) *stdPersister {
